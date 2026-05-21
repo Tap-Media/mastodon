@@ -33,9 +33,31 @@ class Auth::SessionsController < Devise::SessionsController
   end
 
   def destroy
+    if defer_local_oidc_sign_out?
+      session[:preserve_stored_location_after_oidc_logout] = continue_after?
+
+      respond_to do |format|
+        format.json do
+          render json: { redirect_to: after_sign_out_path_for(resource_name) }, status: 200
+        end
+        format.all { redirect_to after_sign_out_path_for(resource_name), allow_other_host: true }
+      end
+
+      return
+    end
+
     super
-    session.delete(:challenge_passed_at)
-    flash.delete(:notice)
+    cleanup_after_local_sign_out
+  end
+
+  def oidc_logout_callback
+    stored_location = stored_location_for(:user) if session.delete(:preserve_stored_location_after_oidc_logout)
+
+    sign_out(resource_name)
+    cleanup_after_local_sign_out
+    store_location_for(:user, stored_location) if stored_location.present?
+
+    redirect_to root_path
   end
 
   protected
@@ -83,6 +105,15 @@ class Auth::SessionsController < Devise::SessionsController
     original_stored_location = stored_location_for(:user)
     yield
     store_location_for(:user, original_stored_location)
+  end
+
+  def cleanup_after_local_sign_out
+    session.delete(:challenge_passed_at)
+    flash.delete(:notice)
+  end
+
+  def defer_local_oidc_sign_out?
+    oidc_logout_flow_enabled? && oidc_logout_redirect_url.present?
   end
 
   def check_suspicious!

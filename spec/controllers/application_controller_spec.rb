@@ -10,14 +10,16 @@ RSpec.describe ApplicationController do
   end
 
   def stub_error_layout_vite_tags
-    %i[
+    view_context = controller.view_context
+
+    %i(
       vite_client_tag
       vite_react_refresh_tag
       vite_polyfills_tag
       vite_stylesheet_tag
       vite_typescript_tag
-    ].each do |method_name|
-      allow_any_instance_of(ActionView::Base).to receive(method_name).and_return(nil)
+    ).each do |method_name|
+      allow(view_context).to receive(method_name).and_return(nil)
     end
   end
 
@@ -28,18 +30,16 @@ RSpec.describe ApplicationController do
     allow(Account).to receive(:without_internal).and_return(accounts_scope)
   end
 
-  def with_oidc_logout_env(overrides = {})
+  def with_oidc_logout_env(overrides = {}, &block)
     ClimateControl.modify(
       {
         OMNIAUTH_ONLY: 'true',
         OIDC_CLIENT_ID: 'yoush-social-web',
-        OIDC_IDP_LOGOUT_REDIRECT_URI: 'https://dev.yoush.social.tapofthink.com/',
+        OIDC_IDP_LOGOUT_REDIRECT_URI: 'https://dev.yoush.social.tapofthink.com/auth/sign_out/callback',
         OIDC_ISSUER: 'https://dev.yoush.auth.tapofthink.com/realms/yoush',
         OIDC_END_SESSION_ENDPOINT: nil,
-      }.merge(overrides)
-    ) do
-      yield
-    end
+      }.merge(overrides), &block
+    )
   end
 
   def stub_oidc_enabled
@@ -134,7 +134,7 @@ RSpec.describe ApplicationController do
 
       it 'builds a provider logout url with client_id and post_logout_redirect_uri' do
         expect(controller.send(:after_sign_out_path_for, :user)).to eq(
-          'https://dev.yoush.auth.tapofthink.com/realms/yoush/protocol/openid-connect/logout?client_id=yoush-social-web&post_logout_redirect_uri=https%3A%2F%2Fdev.yoush.social.tapofthink.com%2F'
+          'https://dev.yoush.auth.tapofthink.com/realms/yoush/protocol/openid-connect/logout?client_id=yoush-social-web&post_logout_redirect_uri=https%3A%2F%2Fdev.yoush.social.tapofthink.com%2Fauth%2Fsign_out%2Fcallback'
         )
       end
     end

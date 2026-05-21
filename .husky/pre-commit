@@ -1,1 +1,25 @@
+repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+ruby_version=$(tr -d '\r' < "$repo_root/.ruby-version" 2>/dev/null)
+
+if [ -n "$ruby_version" ]; then
+	ruby_home=${HUSKY_RUBY_HOME:-}
+
+	if [ -n "$ruby_home" ] && [ -x "$ruby_home/bin/ruby" ]; then
+		PATH="$ruby_home/bin:$PATH"
+	else
+		for candidate in \
+			"$HOME/.rubies/$ruby_version" \
+			"$HOME/.local/ruby-$ruby_version" \
+			"$HOME/.local/rubies/$ruby_version"
+		do
+			if [ -x "$candidate/bin/ruby" ]; then
+				PATH="$candidate/bin:$PATH"
+				break
+			fi
+		done
+	fi
+
+	export PATH
+fi
+
 yarn lint-staged

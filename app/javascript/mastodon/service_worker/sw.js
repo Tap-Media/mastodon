@@ -67,7 +67,7 @@ self.addEventListener('activate', function(event) {
 self.addEventListener('fetch', function(event) {
   const url = new URL(event.request.url);
 
-  if (url.pathname === '/auth/sign_out') {
+  if (url.pathname === '/auth/sign_out/callback') {
     const asyncResponse = fetch(event.request);
     const asyncCache = openWebCache();
 

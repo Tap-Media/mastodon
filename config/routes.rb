@@ -70,6 +70,7 @@ Rails.application.routes.draw do
 
   devise_scope :user do
     get '/invite/:invite_code', to: 'auth/registrations#new', as: :public_invite
+    get 'auth/sign_out/callback', to: 'auth/sessions#oidc_logout_callback', as: :oidc_logout_callback
 
     resource :unsubscribe, only: [:show, :create], controller: :unsubscriptions
 

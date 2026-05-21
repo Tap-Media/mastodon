@@ -6,6 +6,18 @@ require 'webauthn/fake_client'
 RSpec.describe Auth::SessionsController do
   render_views
 
+  def with_oidc_logout_env(overrides = {}, &block)
+    ClimateControl.modify(
+      {
+        OMNIAUTH_ONLY: 'true',
+        OIDC_CLIENT_ID: 'yoush-social-web',
+        OIDC_IDP_LOGOUT_REDIRECT_URI: 'https://dev.yoush.social.tapofthink.com/auth/sign_out/callback',
+        OIDC_ISSUER: 'https://dev.yoush.auth.tapofthink.com/realms/yoush',
+        OIDC_END_SESSION_ENDPOINT: nil,
+      }.merge(overrides), &block
+    )
+  end
+
   before do
     request.env['devise.mapping'] = Devise.mappings[:user]
   end
@@ -46,6 +58,48 @@ RSpec.describe Auth::SessionsController do
         delete :destroy
 
         expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+
+    context 'with oidc-only logout' do
+      around do |example|
+        with_oidc_logout_env do
+          example.run
+        end
+      end
+
+      before do
+        allow(Rails.configuration.x.omniauth).to receive(:oidc_enabled?).and_return(true)
+      end
+
+      it 'redirects to the provider logout page without clearing the local session yet' do
+        sign_in(user, scope: :user)
+
+        delete :destroy
+
+        expect(response).to redirect_to(
+          'https://dev.yoush.auth.tapofthink.com/realms/yoush/protocol/openid-connect/logout?client_id=yoush-social-web&post_logout_redirect_uri=https%3A%2F%2Fdev.yoush.social.tapofthink.com%2Fauth%2Fsign_out%2Fcallback'
+        )
+        expect(controller.current_user).to eq(user)
+      end
+
+      it 'keeps the stored redirect location across the provider confirmation round-trip' do
+        sign_in(user, scope: :user)
+        controller.store_location_for(:user, '/authorize')
+
+        delete :destroy, params: { continue: 'true' }
+        get :oidc_logout_callback
+
+        expect(controller.stored_location_for(:user)).to eq('/authorize')
+      end
+
+      it 'clears the local session from the oidc logout callback' do
+        sign_in(user, scope: :user)
+
+        get :oidc_logout_callback
+
+        expect(controller.current_user).to be_nil
+        expect(response).to redirect_to(root_path)
       end
     end
   end

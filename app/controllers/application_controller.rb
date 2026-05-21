@@ -91,9 +91,13 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_out_path_for(_resource_or_scope)
-    return new_user_session_path unless ENV['OMNIAUTH_ONLY'] == 'true' && Rails.configuration.x.omniauth.oidc_enabled?
+    return new_user_session_path unless oidc_logout_flow_enabled?
 
     oidc_logout_redirect_url || '/auth/auth/openid_connect/logout'
+  end
+
+  def oidc_logout_flow_enabled?
+    ENV['OMNIAUTH_ONLY'] == 'true' && Rails.configuration.x.omniauth.oidc_enabled?
   end
 
   def oidc_logout_redirect_url
@@ -120,7 +124,7 @@ class ApplicationController < ActionController::Base
     "#{oidc_issuer.chomp('/')}/protocol/openid-connect/logout"
   end
 
-  private :oidc_logout_redirect_url, :default_oidc_end_session_endpoint
+  private :oidc_logout_flow_enabled?, :oidc_logout_redirect_url, :default_oidc_end_session_endpoint
 
   protected
 
