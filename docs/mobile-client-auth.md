@@ -6,6 +6,8 @@ This document describes how a mobile client should integrate registration and si
 
 It covers the Mastodon-compatible auth APIs exposed by this server.
 
+For first-party mobile Keycloak SSO that must preserve the backend OIDC callback and return a one-time mobile handoff code, see `docs/mobile-keycloak-handoff-contract.md` in the `yoush_media_social` repo.
+
 ## Scope
 
 Use this document for the following flows:
@@ -28,17 +30,17 @@ Do not use the `Internal Auth APIs` section from `API_LIST.md` for this base URL
 
 ## Endpoints Summary
 
-| Purpose | Method | Path |
-|---|---|---|
-| Create OAuth app | `POST` | `/api/v1/apps` |
-| Get app token | `POST` | `/oauth/token` |
-| Register account | `POST` | `/api/v1/accounts` |
-| Start OAuth login | `GET` | `/oauth/authorize` |
-| Exchange auth code | `POST` | `/oauth/token` |
-| Verify current user | `GET` | `/api/v1/accounts/verify_credentials` |
-| Revoke token | `POST` | `/oauth/revoke` |
-| Resend confirmation email | `POST` | `/api/v1/emails/confirmations` |
-| Check email confirmed | `GET` | `/api/v1/emails/check_confirmation` |
+| Purpose                   | Method | Path                                  |
+| ------------------------- | ------ | ------------------------------------- |
+| Create OAuth app          | `POST` | `/api/v1/apps`                        |
+| Get app token             | `POST` | `/oauth/token`                        |
+| Register account          | `POST` | `/api/v1/accounts`                    |
+| Start OAuth login         | `GET`  | `/oauth/authorize`                    |
+| Exchange auth code        | `POST` | `/oauth/token`                        |
+| Verify current user       | `GET`  | `/api/v1/accounts/verify_credentials` |
+| Revoke token              | `POST` | `/oauth/revoke`                       |
+| Resend confirmation email | `POST` | `/api/v1/emails/confirmations`        |
+| Check email confirmed     | `GET`  | `/api/v1/emails/check_confirmation`   |
 
 ## `APP_NAME` And `REDIRECT_URI`
 
@@ -97,14 +99,14 @@ If the mobile team has not chosen a value yet, the value must be defined first i
 
 ## Credentials And Where They Come From
 
-| Value | Source |
-|---|---|
-| `APP_NAME` | Chosen by mobile team, stored in mobile app config |
-| `REDIRECT_URI` | Chosen by mobile team, stored in deep link config |
-| `client_id` | Returned by `POST /api/v1/apps` |
-| `client_secret` | Returned by `POST /api/v1/apps` |
-| `app access token` | Returned by `POST /oauth/token` with `grant_type=client_credentials` |
-| `user access token` | Returned by sign-up or authorization code exchange |
+| Value               | Source                                                               |
+| ------------------- | -------------------------------------------------------------------- |
+| `APP_NAME`          | Chosen by mobile team, stored in mobile app config                   |
+| `REDIRECT_URI`      | Chosen by mobile team, stored in deep link config                    |
+| `client_id`         | Returned by `POST /api/v1/apps`                                      |
+| `client_secret`     | Returned by `POST /api/v1/apps`                                      |
+| `app access token`  | Returned by `POST /oauth/token` with `grant_type=client_credentials` |
+| `user access token` | Returned by sign-up or authorization code exchange                   |
 
 ## Recommended Provisioning Model
 
@@ -225,17 +227,17 @@ reason=
 
 Supported payload fields:
 
-| Field | Required | Notes |
-|---|---|---|
-| `username` | Yes | Account username |
-| `email` | Yes | User email |
-| `password` | Yes | Password |
-| `agreement` | Yes in practice | Send `true` |
-| `date_of_birth` | Conditional | Needed when minimum age is enabled |
-| `locale` | No | Example: `vi` |
-| `time_zone` | No | Example: `Asia/Ho_Chi_Minh` |
-| `invite_code` | No | Required if registrations are invite-only |
-| `reason` | No | Used as invite request text |
+| Field           | Required        | Notes                                     |
+| --------------- | --------------- | ----------------------------------------- |
+| `username`      | Yes             | Account username                          |
+| `email`         | Yes             | User email                                |
+| `password`      | Yes             | Password                                  |
+| `agreement`     | Yes in practice | Send `true`                               |
+| `date_of_birth` | Conditional     | Needed when minimum age is enabled        |
+| `locale`        | No              | Example: `vi`                             |
+| `time_zone`     | No              | Example: `Asia/Ho_Chi_Minh`               |
+| `invite_code`   | No              | Required if registrations are invite-only |
+| `reason`        | No              | Used as invite request text               |
 
 Successful response example:
 
