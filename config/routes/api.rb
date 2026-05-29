@@ -107,6 +107,17 @@ namespace :api, format: false do
     end
 
     resources :media, only: [:create, :update, :show, :destroy]
+
+    resources :stories, only: [:create, :show, :destroy] do
+      collection do
+        get :tray
+      end
+
+      member do
+        post :view
+      end
+    end
+
     resources :blocks, only: [:index]
     resources :mutes, only: [:index]
     resources :favourites, only: [:index]
@@ -222,6 +233,7 @@ namespace :api, format: false do
         resources :featured_tags, only: :index
         resources :endorsements, only: :index
         resources :email_subscriptions, only: :create
+        resources :stories, only: :index
       end
 
       member do

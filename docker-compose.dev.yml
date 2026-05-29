@@ -1,0 +1,114 @@
+name: yoush-social-dev
+
+x-app-base: &app-base
+  build:
+    context: .
+    dockerfile: .devcontainer/Dockerfile
+  working_dir: /app
+  stdin_open: true
+  tty: true
+  volumes:
+    - .:/app:cached
+    - bundle-cache:/usr/local/bundle
+    - node-modules:/app/node_modules
+  env_file:
+    - .env.development
+  environment:
+    RAILS_ENV: development
+    NODE_ENV: development
+    BIND: 0.0.0.0
+    PORT: '3000'
+    BOOTSNAP_CACHE_DIR: /tmp
+    DB_HOST: db
+    DB_PORT: '5432'
+    DB_USER: postgres
+    DB_PASS: postgres
+    DB_NAME: mastodon_development
+    REDIS_HOST: redis
+    REDIS_PORT: '6379'
+    LOCAL_DOMAIN: localhost:3000
+    WEB_DOMAIN: localhost:3000
+    STREAMING_API_BASE_URL: http://localhost:4000
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+  setup:
+    <<: *app-base
+    command: >
+      bash -lc "
+        gem install bundler -v 4.0.10 &&
+        (bundle check || bundle install) &&
+        corepack enable &&
+        bin/yarn install --immutable &&
+        bundle exec rails db:prepare
+      "
+    restart: 'no'
+
+  web:
+    <<: *app-base
+    command: >
+      bash -lc "
+        gem install bundler -v 4.0.10 &&
+        (bundle check || bundle install) &&
+        corepack enable &&
+        bin/yarn install --immutable &&
+        rm -f tmp/pids/server.pid &&
+        bundle exec puma -C config/puma.rb
+      "
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+    ports:
+      - '3000:3000'
+
+  sidekiq:
+    <<: *app-base
+    command: >
+      bash -lc "
+        gem install bundler -v 4.0.10 &&
+        (bundle check || bundle install) &&
+        bundle exec sidekiq
+      "
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+
+  db:
+    image: postgres:14-alpine
+    restart: unless-stopped
+    shm_size: 256mb
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mastodon_development
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d mastodon_development']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  bundle-cache:
+  node-modules:
+  postgres-data:
+  redis-data:

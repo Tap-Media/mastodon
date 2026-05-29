@@ -68,9 +68,9 @@ module User::Omniauthable
       return if user.nil?
 
       Identity.where(provider: identity.provider, user_id: user.id)
-              .where.not(id: identity.id)
-              .where.not(uid: identity.uid)
-              .destroy_all
+        .where.not(id: identity.id)
+        .where.not(uid: identity.uid)
+        .destroy_all
     end
 
     def create_for_auth(auth)

@@ -183,6 +183,8 @@ class MediaAttachment < ApplicationRecord
   belongs_to :status,           inverse_of: :media_attachments, optional: true
   belongs_to :scheduled_status, inverse_of: :media_attachments, optional: true
 
+  has_one :story_medium, class_name: 'StoryMedium', dependent: :destroy, inverse_of: :media_attachment
+
   has_attached_file :file,
                     styles: ->(f) { file_styles f },
                     processors: ->(f) { file_processors f },
