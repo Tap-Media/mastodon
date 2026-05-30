@@ -345,12 +345,20 @@ es-MX:
       updated_msg: "¡Anuncio actualizado con éxito!"
     collections:
       accounts: Cuentas
+      back_to_account: Volver a la página de la cuenta
+      back_to_report: Volver a la página del informe
+      batch:
+        add_to_report: 'Añadir al informe #%{id}'
+        remove_from_report: Quitar del informe
+        report: Informe
       collection_title: Colección de %{name}
       contents: Contenidos
+      no_collection_selected: No se modificó ninguna colección, ya que no se seleccionó ninguna
       number_of_accounts:
         one: 1 cuenta
         other: "%{count} cuentas"
       open: Abrir
+      title: Colecciones de la cuenta - @%{name}
       view_publicly: Ver públicamente
     critical_update_pending: Actualización crítica pendiente
     custom_emojis:
@@ -948,10 +956,16 @@ es-MX:
           disabled: Requerir un rol de usuario específico
           public: Todos
       landing_page:
+        hints:
+          about_html: Una página con la descripción, la información de contacto, las normas y otros datos sobre este servidor.
+          local_feed_html: Una cronología en tiempo real con las publicaciones más recientes de los usuarios de este servidor.
+          overview_html: Una página que muestra la descripción de tu servidor junto con las publicaciones locales más recientes de los usuarios de este servidor.
+          trends_html: Una página que muestra lo que es popular en este servidor en este momento.
         values:
-          about: Acerca de
-          local_feed: Feed local
-          trends: Tendencias
+          about: Página sobre el servidor
+          local_feed: Cronología local
+          overview: Resumen
+          trends: En tendencia
       registrations:
         moderation_recommandation: "¡Por favor, asegúrate de contar con un equipo de moderación adecuado y activo antes de abrir el registro al público!"
         preamble: Controla quién puede crear una cuenta en tu servidor.
@@ -971,6 +985,7 @@ es-MX:
     site_uploads:
       delete: Eliminar archivo subido
       destroyed_msg: "¡Carga del sitio eliminada con éxito!"
+    skip_to_content: Ir al contenido
     software_updates:
       critical_update: Crítico — por favor actualiza rápidamente
       description: Se recomienda mantener tu instalación de Mastodon actualizada para beneficiarte de las últimas correcciones y características. Además, a veces es crítico actualizar Mastodon a tiempo para evitar problemas de seguridad. Por estas razones, Mastodon busca actualizaciones cada 30 minutos, y le notificará de acuerdo a sus preferencias de notificación por correo electrónico.
@@ -1486,7 +1501,7 @@ es-MX:
       your_appeal_rejected: Tu apelación ha sido rechazada
   edit_profile:
     other: Otro
-    redesign_body: Ahora puede acceder a la edición del perfil desde la propia página del perfil.
+    redesign_body: Ahora se puede acceder a la edición del perfil directamente desde la página del perfil.
     redesign_button: Llévame allí
     redesign_title: Hay una nueva experiencia de edición de perfil
   email_subscription_mailer:

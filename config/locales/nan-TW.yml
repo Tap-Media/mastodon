@@ -341,11 +341,19 @@ nan-TW:
       updated_msg: 公告成功更新ah！
     collections:
       accounts: 口座
+      back_to_account: Tńg去口座ê頁
+      back_to_report: Tńg去檢舉ê頁
+      batch:
+        add_to_report: '加kàu檢舉 #%{id}'
+        remove_from_report: Tuì檢舉suá掉
+        report: 檢舉
       collection_title: "%{name} ê收藏"
       contents: 內容
+      no_collection_selected: 因為無揀任何收藏，所以lóng無改變
       number_of_accounts:
         other: "%{count} ê口座"
       open: 開
+      title: Tsit ê口座ê 收藏 - @%{name}
       view_publicly: 公開看
     critical_update_pending: 愛處理ê重大更新
     custom_emojis:
@@ -474,9 +482,52 @@ nan-TW:
         title: 封鎖新ê電子phue ê域名
       no_email_domain_block_selected: 因為無揀任何電子phue域名封鎖，所以lóng無改變
       not_permitted: 無允准
+      reset: 重頭設
       resolved_dns_records_hint_html: 域名解析做下kha ê MX域名，tsiah ê域名上後負責收電子phue。封鎖MX域名ē封任何有siâng款MX域名ê電子郵件ê註冊，就算通看見ê域名無kâng，mā án-ne。<strong>Tio̍h細膩，m̄通封鎖主要ê電子phue提供者。</strong>
       resolved_through_html: 通過 %{domain} 解析
+      search: Tshiau-tshuē
       title: 封鎖ê電子phue域名
+    email_subscriptions:
+      accounts:
+        account: 口座
+        active: 有效ê
+        empty:
+          hint: Iáu無半ê口座有訂ê lâng。
+          no_lists_yet: Iáu無列單
+        inactive: 停止使用ah
+        last_email: 上新ê電子phue箱
+        lead: 有啟用tsit ê功能koh有訂ê lâng ê口座ē展示佇下kha。
+        status: 狀態
+        subscribers: 訂ê lâng
+        title: 電子phue列單
+      additional_footer_texts:
+        show:
+          title: 其他註kha ê文字
+      compliance_settings:
+        additional_footer_text:
+          action: 管理
+          hint: Kan-ta佇電子報ê phue ê註kha出現ê通選ê文字
+          title: 其他註kha ê文字
+        lead: 電子報ê phue可能hőng掠做行銷ê電子批，根據lí pháng ê服侍器ê司法管轄區決定。
+        privacy_policy:
+          action: 管理
+          hint: 逐封電子phue ê下kha lóng ē有連kàu tsit ê政策ê連結
+          title: 隱私權政策
+        title: 守法ê設定
+      danger_zone:
+        disable_feature:
+          action: 停止使用
+          hint: 替逐ê口座關tsit ê功能
+          title: Kā功能停止使用
+        erase_all_data:
+          action: 消除資料
+          hint: 佇逐ê郵件列單內底ê逐封phue lóng永永thâi掉
+          title: 消除所有資料
+        title: 危險ê所在
+      disabled_msg: 停止使用訂電子批成功ah。
+      index:
+        disabled:
+          cannot_be_enabled: Lí ê技術提供者iáu buē替lí ê服侍器啟用tsit ê功能。
     export_domain_allows:
       new:
         title: 輸入允准ê域名
@@ -863,11 +914,6 @@ nan-TW:
           authenticated: Kan-ta hōo登入ê用者
           disabled: 愛特別ê用者角色
           public: Ta̍k lâng
-      landing_page:
-        values:
-          about: 關係本站
-          local_feed: 本地ê動態
-          trends: 趨勢
       registrations:
         moderation_recommandation: 佇開放hōo ta̍k ê lâng註冊進前，請確認lí有夠額koh主動反應ê管理團隊！
         preamble: 控制ē當佇lí ê服侍器註冊ê人。

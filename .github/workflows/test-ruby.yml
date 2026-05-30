@@ -163,11 +163,11 @@ jobs:
             rspec-persistence-main
             rspec-persistence
 
-      - run: bin/flatware rspec -r ./spec/flatware_helper.rb
+      - run: bin/flatware rspec
 
       - name: Upload coverage reports to Codecov
         if: matrix.ruby-version == '.ruby-version'
-        uses: codecov/codecov-action@75cd11691c0faa626561e295848008c8a7dddffe # v5
+        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6
         with:
           files: coverage/lcov/*.lcov
         env:

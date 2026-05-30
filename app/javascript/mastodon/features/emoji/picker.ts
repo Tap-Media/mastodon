@@ -75,6 +75,45 @@ export async function fetchCustomEmojiData() {
   return customEmojis;
 }
 
+type LegacyEmoji =
+  | { id: string; custom?: false; native: string }
+  | {
+      id: string;
+      custom: true;
+    };
+
+export async function reloadCustomEmojis() {
+  customEmojis = null;
+
+  const { loadEmojisIntoCache } =
+    await import('@/mastodon/hooks/useCustomEmojis');
+
+  await Promise.all([fetchCustomEmojiData(), loadEmojisIntoCache()]);
+}
+
+// Replicates the old legacy search function.
+export async function emojiMartSearch(
+  token: string,
+  locale: string,
+  limit = 5,
+): Promise<LegacyEmoji[]> {
+  const query = token.replace(':', '').trim();
+  if (!query.length) {
+    return [];
+  }
+
+  const { search } = await import('./database');
+  const results = await search({ query, locale, limit });
+  return results.map((emoji) =>
+    'shortcode' in emoji
+      ? { id: emoji.shortcode, custom: true }
+      : {
+          id: emoji.label.replaceAll(' ', '_').toLowerCase(),
+          native: emoji.unicode,
+        },
+  );
+}
+
 export function usePickerEmojis() {
   const [, setLoaded] = useState(customEmojis !== null);
 

@@ -345,12 +345,20 @@ fr-CA:
       updated_msg: L’annonce a été mise à jour avec succès !
     collections:
       accounts: Comptes
+      back_to_account: Retour à la page du compte
+      back_to_report: Retour à la page du signalement
+      batch:
+        add_to_report: 'Ajouter au signalement #%{id}'
+        remove_from_report: Retirer du signalement
+        report: Signaler
       collection_title: Collection par %{name}
       contents: Contenu
+      no_collection_selected: Aucune collection n'a était changé car qu'aucune n'a était sélectionnée
       number_of_accounts:
         one: 1 compte
         other: "%{count} comptes"
       open: Ouvrir
+      title: Collections du compte - @%{name}
       view_publicly: Afficher publiquement
     critical_update_pending: Mise à jour critique en attente
     custom_emojis:
@@ -484,8 +492,10 @@ fr-CA:
         title: Blocage d'un nouveau domaine de messagerie électronique
       no_email_domain_block_selected: Aucun blocage de domaine de messagerie n'a été modifié comme aucun n'a été sélectionné
       not_permitted: Non autorisé
+      reset: Réinitialiser
       resolved_dns_records_hint_html: Le nom de domaine est lié aux domaines MX suivants, qui sont responsables de la réception des courriels. Le blocage d'un domaine MX empêchera l'inscription de toute adresse de courriel utilisant le même domaine MX, et ce même si le nom de domaine visible est différent. <strong>Veillez à ne pas bloquer les principaux fournisseurs de services de messagerie.</strong>
       resolved_through_html: Résolu par %{domain}
+      search: Rechercher
       title: Domaines de messagerie électronique bloqués
     email_subscriptions:
       accounts:
@@ -946,9 +956,15 @@ fr-CA:
           disabled: Nécessite un rôle spécifique
           public: Tout le monde
       landing_page:
+        hints:
+          about_html: Une page avec la description, les informations de contact, les règles et d'autres informations concernant ce serveur.
+          local_feed_html: Un flux en direct avec les messages les plus récents des utilisateur·rice·s sur ce serveur.
+          overview_html: Une page montrant la description de votre serveur avec les derniers messages locaux des utilisateur·rice·s sur ce serveur.
+          trends_html: Une page présentant ce qui est populaire sur ce serveur en ce moment.
         values:
-          about: À propos
-          local_feed: Fil local
+          about: Page À propos
+          local_feed: Flux local en direct
+          overview: Aperçu 
           trends: Tendances
       registrations:
         moderation_recommandation: Veuillez vous assurer d'avoir une équipe de modération adéquate et réactive avant d'ouvrir les inscriptions à tout le monde !
@@ -969,6 +985,7 @@ fr-CA:
     site_uploads:
       delete: Supprimer le fichier téléversé
       destroyed_msg: Téléversement sur le site supprimé avec succès !
+    skip_to_content: Accéder au contenu
     software_updates:
       critical_update: Critique — veuillez mettre à jour au plus vite
       description: Il est recommandé de maintenir votre installation de Mastodon à jour afin de bénéficier des derniers correctifs et fonctionnalités. Par ailleurs, il est parfois critique de mettre à jour Mastodon rapidement de manière à éviter les incidents relatifs à la sécurité. Pour ces raisons, Mastodon examine la disponibilté des mises à jour toutes les 30 minutes, et vous en avisera en fonction de vos préférences de notification par courriel.
