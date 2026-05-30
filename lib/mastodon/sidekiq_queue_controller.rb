@@ -44,7 +44,7 @@ module Mastodon
         scheduler_snapshot: scheduler_snapshot
       )
 
-      puts({
+      Rails.logger.debug({
         worker_queue_depth: worker_snapshot[:depth],
         worker_queue_latency: worker_snapshot[:latency],
         scheduler_queue_depth: scheduler_snapshot[:depth],
@@ -57,7 +57,7 @@ module Mastodon
     private
 
     def redis_url(env)
-      return env['REDIS_URL'] if env['REDIS_URL'] && !env['REDIS_URL'].empty?
+      return env['REDIS_URL'] if env['REDIS_URL'].present?
 
       host = env.fetch('REDIS_HOST')
       port = Integer(env.fetch('REDIS_PORT', '6379'))
@@ -108,7 +108,7 @@ module Mastodon
     end
 
     def queue_latency(oldest_job_payload)
-      return 0.0 if oldest_job_payload.nil? || oldest_job_payload.empty?
+      return 0.0 if oldest_job_payload.blank?
 
       enqueued_at = JSON.parse(oldest_job_payload)['enqueued_at']
       return 0.0 if enqueued_at.nil?
@@ -220,10 +220,10 @@ module Mastodon
         break if credentials.respond_to?(:access_key_id) && credentials.respond_to?(:secret_access_key)
 
         next_credentials = if credentials.respond_to?(:resolve)
-          credentials.resolve
-        elsif credentials.respond_to?(:credentials)
-          credentials.credentials
-        end
+                             credentials.resolve
+                           elsif credentials.respond_to?(:credentials)
+                             credentials.credentials
+                           end
 
         break if next_credentials.nil? || next_credentials.equal?(credentials)
 

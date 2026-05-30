@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_05_155103) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_19_100002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -1253,6 +1253,46 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_05_155103) do
     t.index ["status_id"], name: "index_statuses_tags_on_status_id"
   end
 
+  create_table "stories", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.text "caption"
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.datetime "expires_at", null: false
+    t.string "privacy", default: "public", null: false
+    t.datetime "published_at", null: false
+    t.string "status", default: "published", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "viewer_count", default: 0, null: false
+    t.index ["account_id", "published_at"], name: "index_stories_on_account_id_and_published_at", order: { published_at: :desc }
+    t.index ["expires_at"], name: "index_stories_on_expires_at"
+    t.index ["status", "expires_at"], name: "index_stories_on_status_and_expires_at"
+  end
+
+  create_table "story_media", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "media_attachment_id", null: false
+    t.integer "position", default: 0, null: false
+    t.bigint "story_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["media_attachment_id"], name: "index_story_media_on_media_attachment_id", unique: true
+    t.index ["story_id", "position"], name: "index_story_media_on_story_id_and_position", unique: true
+    t.index ["story_id"], name: "index_story_media_on_story_id"
+  end
+
+  create_table "story_views", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "first_viewed_at", null: false
+    t.integer "impression_count", default: 1, null: false
+    t.datetime "last_viewed_at", null: false
+    t.bigint "story_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "viewer_account_id", null: false
+    t.index ["story_id", "viewer_account_id"], name: "index_story_views_on_story_id_and_viewer_account_id", unique: true
+    t.index ["story_id"], name: "index_story_views_on_story_id"
+    t.index ["viewer_account_id", "last_viewed_at"], name: "index_story_views_on_viewer_account_id_and_last_viewed_at"
+  end
+
   create_table "tag_follows", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.datetime "created_at", null: false
@@ -1589,6 +1629,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_05_155103) do
   add_foreign_key "statuses", "statuses", column: "reblog_of_id", on_delete: :cascade
   add_foreign_key "statuses_tags", "statuses", on_delete: :cascade
   add_foreign_key "statuses_tags", "tags", name: "fk_3081861e21", on_delete: :cascade
+  add_foreign_key "stories", "accounts"
+  add_foreign_key "story_media", "media_attachments"
+  add_foreign_key "story_media", "stories"
+  add_foreign_key "story_views", "accounts", column: "viewer_account_id"
+  add_foreign_key "story_views", "stories"
   add_foreign_key "tag_follows", "accounts", on_delete: :cascade
   add_foreign_key "tag_follows", "tags", on_delete: :cascade
   add_foreign_key "tag_trends", "tags", on_delete: :cascade
@@ -1623,9 +1668,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_05_155103) do
   add_index "account_summaries", ["account_id"], name: "index_account_summaries_on_account_id", unique: true
 
   create_view "global_follow_recommendations", materialized: true, sql_definition: <<-SQL
-      SELECT account_id,
-      sum(rank) AS rank,
-      array_agg(reason) AS reason
+      SELECT t0.account_id,
+      sum(t0.rank) AS rank,
+      array_agg(t0.reason) AS reason
      FROM ( SELECT account_summaries.account_id,
               ((count(follows.id))::numeric / (1.0 + (count(follows.id))::numeric)) AS rank,
               'most_followed'::text AS reason
@@ -1649,8 +1694,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_05_155103) do
                     WHERE (follow_recommendation_suppressions.account_id = statuses.account_id)))))
             GROUP BY account_summaries.account_id
            HAVING (sum((status_stats.reblogs_count + status_stats.favourites_count)) >= (5)::numeric)) t0
-    GROUP BY account_id
-    ORDER BY (sum(rank)) DESC;
+    GROUP BY t0.account_id
+    ORDER BY (sum(t0.rank)) DESC;
   SQL
   add_index "global_follow_recommendations", ["account_id"], name: "index_global_follow_recommendations_on_account_id", unique: true
 
@@ -1680,9 +1725,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_05_155103) do
   add_index "instances", ["domain"], name: "index_instances_on_domain", unique: true
 
   create_view "user_ips", sql_definition: <<-SQL
-      SELECT user_id,
-      ip,
-      max(used_at) AS used_at
+      SELECT t0.user_id,
+      t0.ip,
+      max(t0.used_at) AS used_at
      FROM ( SELECT users.id AS user_id,
               users.sign_up_ip AS ip,
               users.created_at AS used_at
@@ -1699,6 +1744,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_05_155103) do
               login_activities.created_at
              FROM login_activities
             WHERE (login_activities.success = true)) t0
-    GROUP BY user_id, ip;
+    GROUP BY t0.user_id, t0.ip;
   SQL
 end
