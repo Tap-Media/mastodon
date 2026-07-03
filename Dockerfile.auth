@@ -1,0 +1,28 @@
+# Dockerfile dành riêng cho Auth/SSO - dùng official image làm base
+# Không cần build lại frontend (Vite) vì chỉ thay đổi code Ruby/backend
+# Phù hợp với máy build nhỏ (t3.small, 2GB RAM)
+
+FROM ghcr.io/mastodon/mastodon:v4.5.10
+
+USER root
+
+# Chỉ copy các file Ruby/Haml đã tùy chỉnh cho Keycloak SSO
+# Tất cả các file này đều là backend-only, không ảnh hưởng tới frontend assets
+
+# Routes
+COPY config/routes.rb /opt/mastodon/config/routes.rb
+COPY config/routes/ /opt/mastodon/config/routes/
+
+# Controllers
+COPY app/controllers/auth/mobile_openid_connects_controller.rb \
+     /opt/mastodon/app/controllers/auth/mobile_openid_connects_controller.rb
+COPY app/controllers/auth/omniauth_callbacks_controller.rb \
+     /opt/mastodon/app/controllers/auth/omniauth_callbacks_controller.rb
+COPY app/controllers/api/v1/mobile/ \
+     /opt/mastodon/app/controllers/api/v1/mobile/
+
+# Views
+COPY app/views/auth/mobile_openid_connects/ \
+     /opt/mastodon/app/views/auth/mobile_openid_connects/
+
+USER mastodon
