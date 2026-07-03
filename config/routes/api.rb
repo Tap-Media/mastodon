@@ -130,6 +130,10 @@ namespace :api, format: false do
 
     resources :apps, only: [:create]
 
+    namespace :mobile, module: :mobile do
+      post 'auth/exchange', to: 'auth#exchange'
+    end
+
     namespace :trends do
       resources :tags, only: [:index]
       resources :links, only: [:index]

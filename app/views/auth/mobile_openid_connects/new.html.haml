@@ -1,0 +1,7 @@
+%form{ id: 'sso_form', action: omniauth_authorize_path(:user, :openid_connect), method: :post }
+  = hidden_field_tag :authenticity_token, form_authenticity_token
+  - if session[:mobile_handoff] && session[:mobile_handoff][:mode] == 'signup'
+    = hidden_field_tag :screen_hint, 'signup'
+
+:javascript
+  document.getElementById('sso_form').submit();
