@@ -105,7 +105,7 @@ Rails.application.routes.draw do
     scope module: :activitypub do
       resource :outbox, only: [:show]
       resource :inbox, only: [:create]
-      resources :collections, only: [:show], as: :actor_collections, constraints: { id: Regexp.union(ActivityPub::CollectionsController::SUPPORTED_COLLECTIONS) }
+      resources :collections, only: [:show], as: :actor_collections, constraints: { id: /featured|tags/ }
       resource :followers_synchronization, only: [:show]
       resources :quote_authorizations, only: [:show]
     end
