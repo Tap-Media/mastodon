@@ -3,6 +3,8 @@
 class Auth::MobileOpenidConnectsController < ApplicationController
   layout 'auth'
 
+  content_security_policy false
+
   def new
     client_id = params[:client_id]
     redirect_uri = params[:redirect_uri]
