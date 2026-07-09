@@ -18,8 +18,9 @@ class Api::V1::Mobile::AuthController < Api::BaseController
       return
     end
 
-    # Fetch and atomically delete from cache
-    cached_data = Rails.cache.delete("mobile_handoff:#{one_time_code}")
+    # Fetch and delete from cache
+    cached_data = Rails.cache.read("mobile_handoff:#{one_time_code}")
+    Rails.cache.delete("mobile_handoff:#{one_time_code}")
 
     if cached_data.nil?
       render json: {
