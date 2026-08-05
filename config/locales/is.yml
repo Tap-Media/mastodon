@@ -4,6 +4,7 @@ is:
     about_mastodon_html: 'Samfélagsnet framtíðarinnar: Engar auglýsingar, ekkert eftirlit stórfyrirtækja, siðleg hönnun og engin miðstýring! Þú átt þín eigin gögn í Mastodon!'
     contact_missing: Ekki skilgreint
     contact_unavailable: Ekki til staðar
+    default_thumbnail_description: Tveir brosandi teiknimyndaloðfílar (sem líkjast fílum) henda pappírsskutlu á milli sín. Umhverfis þá er blár himinn og fljótandi plánetur með trjám og fleiri loðfílum á þeim.
     hosted_on: Mastodon hýst á %{domain}
     title: Um hugbúnaðinn
   accounts:
@@ -500,13 +501,26 @@ is:
     email_subscriptions:
       accounts:
         account: Aðgangur
-        active: Virkur
         empty:
           hint: Engir aðgangar eru ennþá með neina áskrifendur.
           no_lists_yet: Ennþá engir listar
-        inactive: Óvirkur
         last_email: Síðasti tölvupóstur
         lead: Aðgangar sem hafa virkjað eiginleikann og eru með áskrifendur munu birtast hér fyrir neðan.
+        show:
+          confirm_disable_feature: Á að gera óvirkar fréttir í tölvupósti frá %{name}? Færslur verða ekki lengur sendar í tölvupósti frá þessum notandaaðgangi. Notandinn mun samt geta virkjað aftur þennan eiginleika í stillingunum sínum. Til að fjarlægja endanlega aðgang að þessum eiginleika skaltu breyta heimildum aðgangsins í gegnum 'Hlutverk'.
+          confirm_remove_subscriber: "%{email} mun ekki lengur fá tölvupósta frá %{name}. Ekki er hægt að afturkalla þessa aðgerð."
+          consent: Áskrifendur hafa einungis samþykkt að fá sendar færslur í tölvupósti. Ekki nota þennan lista í neinum öðrum tilgangi.
+          date: Dagsetning skráningar
+          disable_feature: Gera eiginleika óvirkan
+          disabled: Eiginleikinn var gerður óvirkur og eru tölvupóstar ekki lengur sendir á þenna lista.
+          email: Tölvupóstfang
+          empty:
+            hint: Enginn hefur enn gerst áskrifandi að þessum notandaaðgangi.
+            no_subscribers_yet: Engir áskrifendur ennþá
+          enable_feature: Virkja eiginleika
+          no_access_html: Þessi aðgangur hefur ekki lengur heimild til að virkja þennan eiginleika. Breyttu því í <a href="%{roles_path}">Hlutverk</a>.
+          title: Tölvupóstfréttir frá %{name}
+          view_account: Skoða notandaaðgang
         status: Staða
         subscribers: Áskrifendur
         title: Póstlistar
@@ -746,7 +760,7 @@ is:
       action_log: Atvikaskrá
       action_taken_by: Aðgerð framkvæmd af
       actions:
-        delete_description_html: Kærðum færslum verður eytt og refsing skráð svo þú eigir auðveldara með að bregðast við í framtíðinni verði um fleiri brot að ræða frá sama notandaaðgangi.
+        delete_description_html: Kærðum færslum og/eða söfnum verður eytt og skráð bann til að flýta fyrir áframhaldandi brotum af hálfu sama notanda.
         mark_as_sensitive_description_html: Myndefnið í kærðu færslunum verður merkt sem viðkvæmt og refsing verður skráð til minnis fyrir viðbrögð gegn mögulegum framtíðarbrotum frá sama notandaaðgangi.
         other_description_html: Skoðaðu fleir valkosti fyrir stjórnun á hegðun notandaaðgangsins og til að stýra samskiptum við kærðan notandaaðgang.
         resolve_description_html: Til engra aðgerða verður tekið gagnvart kærðum færslum, engin refsing verður skráð og kærunni verður lokað.
@@ -773,7 +787,7 @@ is:
       confirm: Staðfesta
       confirm_action: Staðfesta umsjónaraðgerðir gagnvart @%{acct}
       created_at: Tilkynnt
-      delete_and_resolve: Eyða færslum
+      delete_and_resolve: Eyða efni
       forwarded: Áframsent
       forwarded_replies_explanation: Þessi kæra er frá fjartengdum notanda og er um fjartengt efni. Hún hefur verið framsend til þín þar sem kærða efnið er í svari til eins af notendunum þínum.
       forwarded_to: Áframsent á %{domain}
@@ -1505,6 +1519,7 @@ is:
       your_appeal_rejected: Áfrýjun þinni hefur verið hafnað
   edit_profile:
     other: Annað
+    privacy_redesign_body: Valkosturinn að birta fylgjendur þína og það sem þú fylgist með er núna framkvæmdur beint í notandasniðinu þínu.
     redesign_body: Núna er hægt að breyta notandasíðunni sinni beint á þeirri síðu.
     redesign_button: Fara þangað
     redesign_title: Núna er ný aðferð við að breyta notandasíðunni sinni
@@ -1537,7 +1552,9 @@ is:
         success_html: Þú munt núna fara að fá tölvupósta þegar %{name} birtir nýjar færslur. Bættu %{sender} í tengiliðina þína svo þessir póstar lendi ekki í ruslpóstmöppunni þinni.
         title: Þú hefur skráð þig
         unsubscribe: Hætta í áskrift
+    disabled: Óvirkt
     inactive: Óvirkur
+    no_access: Enginn aðgangur
     status: Staða
     subscribers: Áskrifendur
   emoji_styles:
@@ -1573,7 +1590,9 @@ is:
     blocks: Þú útilokar
     bookmarks: Bókamerki
     csv: CSV
+    custom_filters: Síur
     domain_blocks: Útilokanir á lénum
+    json: JSON
     lists: Listar
     mutes: Þú þaggar
     storage: Geymsla myndefnis
@@ -1651,7 +1670,9 @@ is:
       empty: Tóm CSV-skrá
       incompatible_type: Ekki samhæfanlegt valinni tegund innflutnings
       invalid_csv_file: 'Ógild CSV-skrá. Villa: %{error}'
+      invalid_json_file: 'Ógild JSON-skrá. Villa: %{error}'
       over_rows_processing_limit: inniheldur meira en %{count} raðir
+      status_not_found_warning: Sumar af síunum þínum fela tilteknar færslur sem þessi netþjónn kann ekki skil á. Þessar færslur verða ekki síaðar sjálfkrafa ef netþjónninn uppgötvar þær síðar.
       too_large: Skráin er of stór
     failures: Mistök
     imported: Flutt inn
@@ -1668,6 +1689,9 @@ is:
       bookmarks_html:
         one: Þú er í þann mund að fara að <strong>skipta út bókamerkjunum þínum</strong> með allt að <strong>%{count} færslu</strong> úr <strong>%{filename}</strong>.
         other: Þú er í þann mund að fara að <strong>skipta út bókamerkjunum þínum</strong> með allt að <strong>%{count} færslum</strong> úr <strong>%{filename}</strong>.
+      custom_filters_html:
+        one: Þú ert í þann mund að <strong>skipta út síunum þínum</strong> með efninu í <strong>%{filename}</strong>. Allt að <strong>%{count} síu</strong> verður bætt við nýjar síur.
+        other: Þú ert í þann mund að <strong>skipta út síunum þínum</strong> með efninu í <strong>%{filename}</strong>. Allt að <strong>%{count} síum</strong> verður bætt við nýjar síur.
       domain_blocking_html:
         one: Þú er í þann mund að fara að <strong>skipta út listanum þínum yfir útilokuð lén</strong> með allt að <strong>%{count} léni</strong> úr <strong>%{filename}</strong>.
         other: Þú er í þann mund að fara að <strong>skipta út listanum þínum yfir útilokuð lén</strong> með allt að <strong>%{count} lénum</strong> úr <strong>%{filename}</strong>.
@@ -1687,6 +1711,9 @@ is:
       bookmarks_html:
         one: Þú er í þann mund að fara að bæta við allt að <strong>%{count} færslu</strong> úr <strong>%{filename}</strong> við <strong>bókamerkin</strong> þín.
         other: Þú er í þann mund að fara að bæta við allt að <strong>%{count} færslum</strong> úr <strong>%{filename}</strong> við <strong>bókamerkin</strong> þín.
+      custom_filters_html:
+        one: Þú ert í þann mund að bæta við allt að <strong>%{count} síu</strong> úr <strong>%{filename}</strong> við <strong>síurnar þínar</strong>.
+        other: Þú ert í þann mund að bæta við allt að <strong>%{count} síum</strong> úr <strong>%{filename}</strong> við <strong>síurnar þínar</strong>.
       domain_blocking_html:
         one: Þú ert í þann mund að <strong>útiloka</strong> allt að <strong>%{count} lén</strong> úr <strong>%{filename}</strong>.
         other: Þú er í þann mund að fara að <strong>útiloka</strong> allt að <strong>%{count} lén</strong> úr <strong>%{filename}</strong>.
@@ -1723,6 +1750,7 @@ is:
     types:
       blocking: Listi yfir útilokanir
       bookmarks: Bókamerki
+      custom_filters: Síur
       domain_blocking: Listi yfir útilokanir léna
       following: Listi yfir þá sem fylgst er með
       lists: Listar

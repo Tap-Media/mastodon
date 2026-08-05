@@ -150,7 +150,7 @@ class ActivityPub::ProcessAccountService < BaseService
     @account.show_featured           = @json['showFeatured'] if @json.key?('showFeatured')
     @account.show_media              = @json['showMedia'] if @json.key?('showMedia')
     @account.show_media_replies      = @json['showRepliesInMedia'] if @json.key?('showRepliesInMedia')
-    @account.attribution_domains     = as_array(@json['attributionDomains'] || []).take(Account::ATTRIBUTION_DOMAINS_HARD_LIMIT).map { |item| value_or_id(item) }
+    @account.attribution_domains     = as_array(@json['attributionDomains'] || []).take(Account::ATTRIBUTION_DOMAINS_HARD_LIMIT).grep(String)
   end
 
   def set_fetchable_key!
@@ -290,6 +290,7 @@ class ActivityPub::ProcessAccountService < BaseService
 
       # Key is fetched without ID validation because of a GoToSocial bug
       value = fetch_resource_without_id_validation(key_id)
+      next if value.blank?
 
       # Special handling for GoToSocial which returns the whole actor for the key ID
       value = first_of_value(value['publicKey']) if value.is_a?(Hash) && value.key?('publicKey')
