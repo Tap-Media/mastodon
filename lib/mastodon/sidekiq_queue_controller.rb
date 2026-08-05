@@ -10,6 +10,10 @@ require 'uri'
 
 module Mastodon
   class SidekiqQueueController
+    # Epoch seconds are ~1.8e9 and epoch milliseconds ~1.8e12, so this sits far
+    # from both and lets queue_latency accept either unit. See normalize_epoch_seconds.
+    MILLISECOND_EPOCH_THRESHOLD = 1e11
+
     def self.run!
       new.run!
     end
@@ -107,15 +111,28 @@ module Mastodon
       "queue:#{name}"
     end
 
+    # Sidekiq 7 changed `enqueued_at` from epoch seconds to epoch milliseconds.
+    # Subtracting a millisecond value from `Time.now.to_f` yields a large negative
+    # number, which the clamp below turns into 0.0 — so on Sidekiq >= 7 this
+    # reported no latency no matter how old the queue was, silently disabling both
+    # latency-based autoscaling and the latency CloudWatch alarms.
     def queue_latency(oldest_job_payload)
       return 0.0 if oldest_job_payload.nil? || oldest_job_payload.empty?
 
       enqueued_at = JSON.parse(oldest_job_payload)['enqueued_at']
       return 0.0 if enqueued_at.nil?
 
-      [@time_source.call - enqueued_at.to_f, 0.0].max
+      [@time_source.call - normalize_epoch_seconds(enqueued_at.to_f), 0.0].max
     rescue JSON::ParserError, TypeError
       0.0
+    end
+
+    # Accepts either unit so a queue drained across a Sidekiq upgrade, or a payload
+    # written by an older client, cannot be misread by three orders of magnitude in
+    # either direction. Current epoch seconds are ~1.8e9 and milliseconds ~1.8e12,
+    # so the threshold sits far from both.
+    def normalize_epoch_seconds(value)
+      value > MILLISECOND_EPOCH_THRESHOLD ? value / 1000.0 : value
     end
 
     def publish_metrics(worker_snapshot:, scheduler_snapshot:)

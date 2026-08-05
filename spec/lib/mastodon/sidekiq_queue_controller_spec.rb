@@ -137,4 +137,32 @@ RSpec.describe Mastodon::SidekiqQueueController do
       )
     end
   end
+
+  describe '#queue_latency' do
+    let(:now) { 1_785_000_000.0 }
+    let(:controller) { described_class.new(env: env, time_source: -> { now }) }
+
+    it 'reads Sidekiq 7+ millisecond enqueued_at timestamps' do
+      payload = Oj.dump({ 'enqueued_at' => (now - 3600) * 1000 }, mode: :compat)
+
+      expect(controller.send(:queue_latency, payload)).to be_within(0.01).of(3600.0)
+    end
+
+    it 'still reads legacy second-based enqueued_at timestamps' do
+      payload = Oj.dump({ 'enqueued_at' => now - 120 }, mode: :compat)
+
+      expect(controller.send(:queue_latency, payload)).to be_within(0.01).of(120.0)
+    end
+
+    it 'does not clamp a genuinely stale millisecond timestamp to zero' do
+      payload = Oj.dump({ 'enqueued_at' => (now - 4_665_700) * 1000 }, mode: :compat)
+
+      expect(controller.send(:queue_latency, payload)).to be > 0
+    end
+
+    it 'returns zero for a blank or unparseable payload' do
+      expect(controller.send(:queue_latency, nil)).to eq(0.0)
+      expect(controller.send(:queue_latency, 'not json')).to eq(0.0)
+    end
+  end
 end
