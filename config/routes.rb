@@ -68,6 +68,10 @@ Rails.application.routes.draw do
 
   get '/invite/:invite_code', constraints: ->(req) { req.format == :json }, to: 'api/v1/invites#show'
 
+  # Keycloak calls this server-to-server when a session ends anywhere. Outside
+  # devise_scope on purpose: it carries no cookie and starts no session.
+  post 'auth/sign_out/backchannel', to: 'auth/backchannel_logout#create', as: :oidc_backchannel_logout
+
   devise_scope :user do
     get '/invite/:invite_code', to: 'auth/registrations#new', as: :public_invite
     get 'auth/sign_out/callback', to: 'auth/sessions#oidc_logout_callback', as: :oidc_logout_callback
