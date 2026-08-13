@@ -28,3 +28,13 @@ storybook-static
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Local development leftovers. Upstream leaves these out of .dockerignore even
+# though .gitignore lists them, so a tree that has been developed in ships its
+# own caches and test logs inside the image.
+tmp
+log/*
+!log/.keep
+coverage
+public/packs-dev
+.claude
